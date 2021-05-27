@@ -29,14 +29,14 @@ namespace testnut
             nut = new Nut(POLL_PERIOD);
 
             nut.update += Nut_update;
-            nut.Init("nas2", 3493, "upsmon", "secret");
+            nut.Init("nas2", 3493, "upsmon", "secret", "ups");
 
         }
 
         private void Nut_update(Nut.EUPSStatus estatus, in Dictionary<string, string> vars)
         {
-            string status = vars["ups.status"].Trim('"');
-            int runtime = int.Parse(vars["battery.runtime"].Trim('"'));
+            string status = vars["ups.status"];
+            int runtime = int.Parse(vars["battery.runtime"]);
 
             Invoke((MethodInvoker)delegate {
                 txtStatus.Text = status;

@@ -54,6 +54,7 @@ namespace nutlib
         private string password;
         private string host;
         private int port;
+        private string upsDevice;
         private Queue<string> queue;
         private string activeMsg;
         private const int BufferSize = 256;
@@ -68,12 +69,12 @@ namespace nutlib
 
         static Nut()
         {
-            hiddenForm = HiddenForm.startHiddenForm();
+            hiddenForm = null; 
         }
 
         public Nut(int pollPeriod)
         {
-            period = pollPeriod;
+            period = pollPeriod*1000;   // seconds to millseconds
             disposedValue = false;
             client = null;
             connected = false;
@@ -83,18 +84,30 @@ namespace nutlib
             queue = new Queue<string>();
             vars = new Dictionary<string, string>();
 
-            hiddenForm.PowerModeChanged += OnPowerModeChanged;
         }
 
-        public void Init(string host, int port, string username, string password)
+        public void Init(string host, int port, string username, string password, string upsDevice)
         {
+            if (hiddenForm == null)
+            {
+                hiddenForm = HiddenForm.startHiddenForm();
+            }
+            hiddenForm.PowerModeChanged += OnPowerModeChanged;
+
             this.username = username;
             this.password = password;
             this.host = host;
             this.port = port;
+            this.upsDevice = upsDevice;
 
             reconnect();
         }
+
+        public void Stop()
+        {
+            disconnect();
+        }
+
 
         private void disconnect()
         {
@@ -115,13 +128,22 @@ namespace nutlib
 
         private void reconnect()
         {
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(host);
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
+            try
+            {
+                IPHostEntry ipHostInfo = Dns.GetHostEntry(host);
+                IPAddress ipAddress = ipHostInfo.AddressList[0];
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
-            Log($"Connecting to {host}:{port}");
-            client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), this);
+                NutLog.Log($"Connecting to {host}:{port}");
+                client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), this);
+            }
+            catch (Exception e)
+            {
+                NutLog.Log(e.ToString());
+                client = null;
+                SetupReconnectTimer();
+            }
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
@@ -129,7 +151,7 @@ namespace nutlib
             if (e.Mode == PowerModes.Suspend)
             {
                 // About to suspend
-                Log("Suspending");
+                NutLog.Log("Suspending");
                 if (connected)
                 {
                     disconnect();
@@ -139,7 +161,7 @@ namespace nutlib
             else if ( e.Mode == PowerModes.Resume )
             {
                 // About to resume
-                Log("Resuming");
+                NutLog.Log("Resuming");
                 if (suspended)
                 {
                     if (timer != null)
@@ -161,7 +183,7 @@ namespace nutlib
         {
             SendMessageAsync("USERNAME {username}");
             SendMessageAsync("PASSWORD {password}");
-            SendMessageAsync("LIST VAR ups");
+            SendMessageAsync("LIST VAR "+ upsDevice);
         }
 
         public void SendMessageAsync(string msg)
@@ -223,16 +245,21 @@ namespace nutlib
 
                 // Begin receiving the data
                 n.client.BeginReceive(n.buffer, 0, BufferSize, 0, new AsyncCallback(ReceiveCallback), n);
-                Log("Connected");
+                NutLog.Log("Connected");
 
                 n.Start();
             }
             catch (Exception e)
             {
-                Log(e.ToString());
-                n.timer = new Timer(new TimerCallback(n.ReconnectTimerCallback));
-                n.timer.Change(RECONNECT_PERIOD, 0);
+                NutLog.Log(e.ToString());
+                n.SetupReconnectTimer();
             }
+        }
+
+        private void SetupReconnectTimer()
+        {
+            timer = new Timer(new TimerCallback(ReconnectTimerCallback));
+            timer.Change(RECONNECT_PERIOD, 0);
         }
 
         private static void ReceiveCallback(IAsyncResult ar)
@@ -249,7 +276,7 @@ namespace nutlib
 
                 if (bytesRead > 0)
                 {
-                    Log($"Received {bytesRead} bytes");
+                    //Log($"Received {bytesRead} bytes");
                     // There might be more data, so store the data received so far.  
                     n.ProcessMessage( Encoding.ASCII.GetString(n.buffer, 0, bytesRead) );
 
@@ -261,13 +288,13 @@ namespace nutlib
                     // All the data has arrived; put it in response.  
                     if (n.sb.Length > 1)
                     {
-                        Log( n.sb.ToString() );
+                        NutLog.Log( n.sb.ToString() );
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                NutLog.Log(e.ToString());
             }
         }
 
@@ -280,7 +307,7 @@ namespace nutlib
                 {
                     // ProcessList( sb.ToString() );
                     readingList = false;
-                    Log(sb.ToString());
+                    NutLog.Log(sb.ToString(), NutLog.ELogLevel.Debug);
                     SendReply(EMsgType.varList, sb.ToString());
                     sending = false;
                 }
@@ -299,14 +326,14 @@ namespace nutlib
             else if (recv.StartsWith("TYPE"))
             {
                 //ProcessVAR( recv )
-                Log(recv);
+                //Log(recv);
                 SendReply(EMsgType.type, recv);
                 sending = false;
             }
             else if (recv.StartsWith("VAR"))
             {
                 //ProcessVAR( recv )
-                Log(recv);
+                //Log(recv);
                 SendReply(EMsgType.var, recv);
                 sending = false;
             }
@@ -320,13 +347,10 @@ namespace nutlib
 
         private void SendReply(Nut.EMsgType type, string data)
         {
-            bool first = false;
             if (type == Nut.EMsgType.varList)
             {
                 Regex ex = new Regex(@"([^\s]+) ([^\s]+) ([^\s]+) (.+)");
 
-                if (vars.Count == 0)
-                    first = true;
                 string[] list = data.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var s in list)
                 {
@@ -345,7 +369,7 @@ namespace nutlib
                             string var = m.Groups[3].Value;
                             string value = m.Groups[4].Value;
 
-                            vars[var] = value;
+                            vars[var] = value.Trim('"');
                         }
                     }
                 }
@@ -354,14 +378,6 @@ namespace nutlib
                     update(status,vars);
 
                 RestartTimer();
-
-                //if (first)
-                //{
-                //    foreach (string k in vars.Keys)
-                //    {
-                //        nut.SendMessageAsync($"GET TYPE ups {k}");
-                //    }
-                //}
             }
             else if (type == Nut.EMsgType.type)
             {
@@ -371,7 +387,7 @@ namespace nutlib
 
         private EUPSStatus decodeStatus(string statusString)
         {
-            string[] ss = statusString.Trim('"').Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] ss = statusString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             EUPSStatus status = 0;
             foreach (string s in ss)
@@ -401,7 +417,7 @@ namespace nutlib
 
         private void PollTimerCallback(object state)
         {
-            SendMessageAsync("LIST VAR ups");
+            SendMessageAsync("LIST VAR "+ upsDevice);
             //PowerModeChangedEventArgs e = new PowerModeChangedEventArgs(PowerModes.Suspend);
             //OnPowerModeChanged(null, e);
         }
@@ -425,17 +441,12 @@ namespace nutlib
 
                 // Complete sending the data to the remote device.  
                 int bytesSent = n.client.EndSend(ar);
-                Log($"Sent {bytesSent} bytes to server.");
+                // Log($"Sent {bytesSent} bytes to server.");
            }
             catch (Exception e)
             {
-                Log(e.ToString());
+                NutLog.Log(e.ToString());
             }
-        }
-
-        static private void Log(string msg)
-        {
-            System.Diagnostics.Debug.WriteLine(msg);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -488,4 +499,12 @@ namespace nutlib
 [cal] The UPS unit is being calibrated.
 [test] UPS test in progress.
 [fsd] Tell slave upsmon instances that final shutdown is underway
+
+* shutdown options
+    * after n seconds
+    * n seconds left
+    * when power drops to n
+    * when FSD
+* shutdown or hybernate
+
  */
