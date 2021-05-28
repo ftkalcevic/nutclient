@@ -30,7 +30,13 @@ namespace nutlib
             NutLog.Log($"username={cfg.username}");
             NutLog.Log($"upsDevice={cfg.upsDevice}");
 
-            nut.Init(cfg.hostname, cfg.port, cfg.username, cfg.password, cfg.upsDevice);
+            nut.Init(isApplication, cfg.hostname, cfg.port, cfg.username, cfg.password, cfg.upsDevice);
+            NutLog.Log($"Started", NutLog.ELogLevel.Debug);
+        }
+
+        public void PowerEvent(bool suspend)
+        {
+            nut.PowerEvent(suspend);
         }
 
         public void Stop()
@@ -40,6 +46,7 @@ namespace nutlib
 
         public NutControl(bool application)
         {
+            NutLog.Log("Initialising NutControl", NutLog.ELogLevel.Debug);
             isApplication = application;
 
             cfg = new NutConfig();
@@ -49,13 +56,14 @@ namespace nutlib
             nut.update += Nut_update;
 
             onBatteryStartTime = null;
+            NutLog.Log("Initialised", NutLog.ELogLevel.Debug);
         }
 
         private void Nut_update(Nut.EUPSStatus status, in Dictionary<string, string> vars)
         {
+            NutLog.Log($"status='{vars["ups.status"]}' charge={vars["battery.charge"]} runtime={vars["battery.runtime"]}");
             if (isActive)
             {
-                NutLog.Log($"status='{vars["ups.status"]}' charge={vars["battery.charge"]} runtime={vars["battery.runtime"]}");
 
                 // regardless of other settings - if we are in FSD, time to stop
                 if ((status & Nut.EUPSStatus.FSD) == Nut.EUPSStatus.FSD)

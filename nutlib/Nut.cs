@@ -43,6 +43,7 @@ namespace nutlib
             FSD     = 1 << 14   /// Tell slave upsmon instances that final shutdown is underway
         };
 
+
         public delegate void VarsUpdate(EUPSStatus status, in Dictionary<string,string> vars);
         private Socket client;
         private bool connected;
@@ -86,13 +87,14 @@ namespace nutlib
 
         }
 
-        public void Init(string host, int port, string username, string password, string upsDevice)
+        public void Init(bool isApplication, string host, int port, string username, string password, string upsDevice)
         {
-            if (hiddenForm == null)
+            if (isApplication)
             {
-                hiddenForm = HiddenForm.startHiddenForm();
+                if ( hiddenForm == null)
+                    hiddenForm = HiddenForm.startHiddenForm();
+                hiddenForm.PowerModeChanged += OnPowerModeChanged;
             }
-            hiddenForm.PowerModeChanged += OnPowerModeChanged;
 
             this.username = username;
             this.password = password;
@@ -100,7 +102,9 @@ namespace nutlib
             this.port = port;
             this.upsDevice = upsDevice;
 
-            reconnect();
+            NutLog.Log("Setting up connect timer", NutLog.ELogLevel.Debug);
+            //reconnect();
+            SetupReconnectTimer(250);
         }
 
         public void Stop()
@@ -146,9 +150,9 @@ namespace nutlib
             }
         }
 
-        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        public void PowerEvent(bool suspend)
         {
-            if (e.Mode == PowerModes.Suspend)
+            if (suspend)
             {
                 // About to suspend
                 NutLog.Log("Suspending");
@@ -158,7 +162,7 @@ namespace nutlib
                     suspended = true;
                 }
             }
-            else if ( e.Mode == PowerModes.Resume )
+            else 
             {
                 // About to resume
                 NutLog.Log("Resuming");
@@ -167,9 +171,21 @@ namespace nutlib
                     if (timer != null)
                         timer.Dispose();
                     timer = new Timer(new TimerCallback(ReconnectTimerCallback));
-                    timer.Change(RECONNECT_PERIOD,0);
+                    timer.Change(RECONNECT_PERIOD, 0);
                     suspended = false;
                 }
+            }
+        }
+
+        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode == PowerModes.Suspend)
+            {
+                PowerEvent(suspend:true);
+            }
+            else if ( e.Mode == PowerModes.Resume )
+            {
+                PowerEvent(suspend: false);
             }
         }
 
@@ -256,10 +272,10 @@ namespace nutlib
             }
         }
 
-        private void SetupReconnectTimer()
+        private void SetupReconnectTimer(int period = -1)
         {
             timer = new Timer(new TimerCallback(ReconnectTimerCallback));
-            timer.Change(RECONNECT_PERIOD, 0);
+            timer.Change(period>=0 ? period : RECONNECT_PERIOD, 0);
         }
 
         private static void ReceiveCallback(IAsyncResult ar)

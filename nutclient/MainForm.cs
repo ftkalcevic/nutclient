@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using nutlib;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace nutclient
 {
@@ -33,19 +34,33 @@ namespace nutclient
         }
 
 
+        string preFormBuffer = "";
         private void NutLog_LogEvent(string msg)
         {
-            txtLog.Invoke( 
-                (MethodInvoker)delegate 
-                {
-                    if (txtLog.TextLength > MAX_LOG_LEN_HIGH)
+            if (txtLog.Handle == null)
+            {
+                preFormBuffer += msg + "\r\n";
+            }
+            else
+            {
+                txtLog.Invoke(
+                    (MethodInvoker)delegate
                     {
-                        txtLog.Select(0, MAX_LOG_LEN_LOW);
-                        txtLog.SelectedText = "";
+                        if (preFormBuffer.Length > 0)
+                        {
+                            txtLog.AppendText(preFormBuffer);
+                            preFormBuffer = "";
+                        }
+
+                        if (txtLog.TextLength > MAX_LOG_LEN_HIGH)
+                        {
+                            txtLog.Select(0, MAX_LOG_LEN_LOW);
+                            txtLog.SelectedText = "";
+                        }
+                        txtLog.AppendText(msg + "\r\n");
                     }
-                    txtLog.AppendText( msg + "\r\n" );
-                }
-            );
+                );
+            }
         }
 
         private void InitDisplay()
@@ -137,7 +152,8 @@ namespace nutclient
             chkStartWithWindows.Enabled = runAsApp;
             radioRunAsService.ForeColor = !runAsApp ? SystemColors.ControlText : SystemColors.GrayText;
             radioRunAsApplication.ForeColor = runAsApp ? SystemColors.ControlText : SystemColors.GrayText;
-            btnServiceInstall.Enabled = !runAsApp;
+            btnServiceInstall.Enabled = true;
+            btnServiceInstall.Text = runAsApp ? "Uninstall" : "Install";
 
             bool shutdown = (nut.cfg.shutdownAction == NutConfig.EShutdownAction.Shutdown);
             radioActionShutdown.ForeColor = shutdown ? SystemColors.ControlText : SystemColors.GrayText;
@@ -219,7 +235,26 @@ namespace nutclient
 
         private void btnServiceInstall_Click(object sender, EventArgs e)
         {
+            bool runAsApp = (nut.cfg.runAs == NutConfig.ERunAs.Application);
+            string ServiceName = "NutClient";
 
+            if (runAsApp)
+            {
+                // uninstall
+                ProcessStartInfo psi = new ProcessStartInfo("sc.exe", $"delete {ServiceName}");
+                psi.UseShellExecute = true;
+                psi.Verb = "runas";
+                Process.Start(psi);
+            }
+            else
+            {
+                // install
+                string cmd = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + " /service";
+                ProcessStartInfo psi = new ProcessStartInfo("sc.exe", $@"create {ServiceName} binPath= ""{cmd}""");
+                psi.UseShellExecute = true;
+                psi.Verb = "runas";
+                Process.Start(psi);
+            }
         }
 
         private void btnTestShutdown_Click(object sender, EventArgs e)

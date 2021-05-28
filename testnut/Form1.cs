@@ -29,7 +29,7 @@ namespace testnut
             nut = new Nut(POLL_PERIOD);
 
             nut.update += Nut_update;
-            nut.Init("nas2", 3493, "upsmon", "secret", "ups");
+            nut.Init(true, "nas2", 3493, "upsmon", "secret", "ups");
 
         }
 

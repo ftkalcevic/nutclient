@@ -57,7 +57,7 @@ namespace nutlib
 
             hostname = "nas2";
             username = "upsmon";
-            password = "secret";
+            password = "";
             upsDevice = "ups";
         }
 

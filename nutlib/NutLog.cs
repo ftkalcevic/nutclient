@@ -11,6 +11,8 @@ namespace nutlib
             Debug,
             Trace
         };
+        const ELogLevel logLevel = ELogLevel.Trace;
+
         public delegate void LogMsgDelegate(string msg);
         public static event LogMsgDelegate LogEvent = null;
         public static string LogFilePath = null;
@@ -26,9 +28,13 @@ namespace nutlib
 
             System.Diagnostics.Debug.WriteLine(s);
 
-            if (level > ELogLevel.Debug && LogEvent != null)
+            if (level >= logLevel)
             {
                 System.IO.File.AppendAllText(LogFilePath, s + "\r\n");
+            }
+
+            if (level >= logLevel && LogEvent != null)
+            {
                 LogEvent(s);
             }
         }
