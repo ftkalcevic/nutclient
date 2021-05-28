@@ -43,8 +43,7 @@ namespace nutclient
                         txtLog.Select(0, MAX_LOG_LEN_LOW);
                         txtLog.SelectedText = "";
                     }
-                    txtLog.Select(txtLog.TextLength, 1);
-                    txtLog.SelectedText = msg + "\r\n";
+                    txtLog.AppendText( msg + "\r\n" );
                 }
             );
         }
@@ -212,7 +211,8 @@ namespace nutclient
                 txtBatteryCharge.Text = batteryCharge.ToString();
                 txtLastUpdate.Text = DateTime.Now.ToString();
 
-                notifyIcon.BalloonTipText = status;
+                notifyIcon.Text = "Status: " + status;
+                notifyIcon.BalloonTipText = "Status: " + status;
                 notifyIcon.BalloonTipTitle = "NUTClient";
             });
         }
