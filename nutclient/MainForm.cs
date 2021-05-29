@@ -15,8 +15,8 @@ namespace nutclient
 {
     public partial class MainForm : Form
     {
-        const int MAX_LOG_LEN_HIGH = 9000;
-        const int MAX_LOG_LEN_LOW = 8000;
+        const int MAX_LOG_LEN_HIGH = 32000;
+        const int MAX_LOG_LEN_LOW = 25000;
         NutControl nut;
         private static int WM_QUERYENDSESSION = 0x11;
         private static bool systemShutdown = false;
@@ -37,7 +37,7 @@ namespace nutclient
         string preFormBuffer = "";
         private void NutLog_LogEvent(string msg)
         {
-            if (txtLog.Handle == null)
+            if (!txtLog.IsHandleCreated)
             {
                 preFormBuffer += msg + "\r\n";
             }

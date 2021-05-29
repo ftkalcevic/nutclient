@@ -229,9 +229,6 @@ namespace nutlib
                 sending = true;
                 byte[] byteData = Encoding.ASCII.GetBytes(msg + "\n");
 
-                // Begin sending the data to the remote device.  
-                client.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this);
-
                 if (timer != null)
                 {
                     timer.Dispose();
@@ -239,6 +236,17 @@ namespace nutlib
                 }
                 timer = new Timer(new TimerCallback(SendTimeoutCallback));
                 timer.Change(SEND_TIMEOUT_PERIOD, 0);
+
+                try
+                {
+                    // Begin sending the data to the remote device.  
+                    client.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this);
+                }
+                catch (Exception e)
+                {
+                    NutLog.Log("Failed to send: " + e.ToString());
+                    SetupReconnectTimer();
+                }
 
             }
         }
@@ -280,9 +288,9 @@ namespace nutlib
 
         private static void ReceiveCallback(IAsyncResult ar)
         {
+            Nut n = (Nut)ar.AsyncState;
             try
             {
-                Nut n = (Nut)ar.AsyncState;
 
                 if (n.client == null)
                     return;
@@ -311,6 +319,7 @@ namespace nutlib
             catch (Exception e)
             {
                 NutLog.Log(e.ToString());
+                n.SetupReconnectTimer();
             }
         }
 

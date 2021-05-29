@@ -61,41 +61,48 @@ namespace nutlib
 
         private void Nut_update(Nut.EUPSStatus status, in Dictionary<string, string> vars)
         {
-            NutLog.Log($"status='{vars["ups.status"]}' charge={vars["battery.charge"]} runtime={vars["battery.runtime"]}");
-            if (isActive)
+            try
             {
+                NutLog.Log($"status='{vars["ups.status"]}' charge={vars["battery.charge"]} runtime={vars["battery.runtime"]}");
+                if (isActive)
+                {
 
-                // regardless of other settings - if we are in FSD, time to stop
-                if ((status & Nut.EUPSStatus.FSD) == Nut.EUPSStatus.FSD)
-                {
-                    NutLog.Log("Received FSD message.  Shutting down now.");
-                    Shutdown();
-                }
-                else
-                {
-                    // on battery
-                    if ((status & Nut.EUPSStatus.OB) == Nut.EUPSStatus.OB)
+                    // regardless of other settings - if we are in FSD, time to stop
+                    if ((status & Nut.EUPSStatus.FSD) == Nut.EUPSStatus.FSD)
                     {
-                        switch (cfg.shutdownCondition)
-                        {
-                            case NutConfig.EShutdownCondition.afterNSeconds:
-                                    ProcessShutdownAfterNSeconds();
-                                    break;
-
-                            case NutConfig.EShutdownCondition.belowNPercent:
-                                    ProcessShutdownBelowPercent(vars);
-                                    break;
-
-                            case NutConfig.EShutdownCondition.nSecondsRemaining:
-                                    ProcessShutdownSecondsRemaining(vars);
-                                    break;
-                        }
+                        NutLog.Log("Received FSD message.  Shutting down now.");
+                        Shutdown();
                     }
                     else
                     {
-                        onBatteryStartTime = DateTime.Now;
+                        // on battery
+                        if ((status & Nut.EUPSStatus.OB) == Nut.EUPSStatus.OB)
+                        {
+                            switch (cfg.shutdownCondition)
+                            {
+                                case NutConfig.EShutdownCondition.afterNSeconds:
+                                    ProcessShutdownAfterNSeconds();
+                                    break;
+
+                                case NutConfig.EShutdownCondition.belowNPercent:
+                                    ProcessShutdownBelowPercent(vars);
+                                    break;
+
+                                case NutConfig.EShutdownCondition.nSecondsRemaining:
+                                    ProcessShutdownSecondsRemaining(vars);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            onBatteryStartTime = DateTime.Now;
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                NutLog.Log(e.ToString());
             }
         }
 

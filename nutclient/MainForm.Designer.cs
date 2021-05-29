@@ -34,7 +34,6 @@ namespace nutclient
             this.tabPageMain = new System.Windows.Forms.TabPage();
             this.label14 = new System.Windows.Forms.Label();
             this.txtLog = new System.Windows.Forms.TextBox();
-            this.btnTestShutdown = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -47,6 +46,8 @@ namespace nutclient
             this.label8 = new System.Windows.Forms.Label();
             this.tabPageConfig = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.txtPort = new nutclient.NumericTextEdit();
+            this.txtPollPeriod = new nutclient.NumericTextEdit();
             this.txtUPSDevice = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -68,6 +69,9 @@ namespace nutclient
             this.radioActionHibernate = new System.Windows.Forms.RadioButton();
             this.radioActionShutdown = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtPercentRemaining = new nutclient.NumericTextEdit();
+            this.txtSecondRemaining = new nutclient.NumericTextEdit();
+            this.txtSecondsOnBattery = new nutclient.NumericTextEdit();
             this.radioConditionFinalShutdown = new System.Windows.Forms.RadioButton();
             this.lblConditionBelowPercent = new System.Windows.Forms.Label();
             this.radioConditionBelowPercent = new System.Windows.Forms.RadioButton();
@@ -77,11 +81,7 @@ namespace nutclient
             this.label1 = new System.Windows.Forms.Label();
             this.radioConditionAfterSeconds = new System.Windows.Forms.RadioButton();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.txtSecondsOnBattery = new nutclient.NumericTextEdit();
-            this.txtSecondRemaining = new nutclient.NumericTextEdit();
-            this.txtPercentRemaining = new nutclient.NumericTextEdit();
-            this.txtPort = new nutclient.NumericTextEdit();
-            this.txtPollPeriod = new nutclient.NumericTextEdit();
+            this.btnTestShutdown = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageConfig.SuspendLayout();
@@ -108,7 +108,6 @@ namespace nutclient
             // 
             this.tabPageMain.Controls.Add(this.label14);
             this.tabPageMain.Controls.Add(this.txtLog);
-            this.tabPageMain.Controls.Add(this.btnTestShutdown);
             this.tabPageMain.Controls.Add(this.label13);
             this.tabPageMain.Controls.Add(this.label12);
             this.tabPageMain.Controls.Add(this.label11);
@@ -149,17 +148,6 @@ namespace nutclient
             this.txtLog.Size = new System.Drawing.Size(338, 349);
             this.txtLog.TabIndex = 11;
             this.txtLog.WordWrap = false;
-            // 
-            // btnTestShutdown
-            // 
-            this.btnTestShutdown.Location = new System.Drawing.Point(247, 141);
-            this.btnTestShutdown.Name = "btnTestShutdown";
-            this.btnTestShutdown.Size = new System.Drawing.Size(100, 23);
-            this.btnTestShutdown.TabIndex = 10;
-            this.btnTestShutdown.Text = "Test Shutdown";
-            this.btnTestShutdown.UseVisualStyleBackColor = true;
-            this.btnTestShutdown.Visible = false;
-            this.btnTestShutdown.Click += new System.EventHandler(this.btnTestShutdown_Click);
             // 
             // label13
             // 
@@ -282,6 +270,22 @@ namespace nutclient
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "NUT Config";
+            // 
+            // txtPort
+            // 
+            this.txtPort.digits = 6;
+            this.txtPort.Location = new System.Drawing.Point(75, 49);
+            this.txtPort.Name = "txtPort";
+            this.txtPort.Size = new System.Drawing.Size(67, 23);
+            this.txtPort.TabIndex = 6;
+            // 
+            // txtPollPeriod
+            // 
+            this.txtPollPeriod.digits = 6;
+            this.txtPollPeriod.Location = new System.Drawing.Point(75, 165);
+            this.txtPollPeriod.Name = "txtPollPeriod";
+            this.txtPollPeriod.Size = new System.Drawing.Size(100, 23);
+            this.txtPollPeriod.TabIndex = 12;
             // 
             // txtUPSDevice
             // 
@@ -446,6 +450,7 @@ namespace nutclient
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnTestShutdown);
             this.groupBox2.Controls.Add(this.radioActionHibernate);
             this.groupBox2.Controls.Add(this.radioActionShutdown);
             this.groupBox2.Location = new System.Drawing.Point(8, 176);
@@ -498,6 +503,30 @@ namespace nutclient
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Condition";
+            // 
+            // txtPercentRemaining
+            // 
+            this.txtPercentRemaining.digits = 6;
+            this.txtPercentRemaining.Location = new System.Drawing.Point(145, 96);
+            this.txtPercentRemaining.Name = "txtPercentRemaining";
+            this.txtPercentRemaining.Size = new System.Drawing.Size(67, 23);
+            this.txtPercentRemaining.TabIndex = 13;
+            // 
+            // txtSecondRemaining
+            // 
+            this.txtSecondRemaining.digits = 6;
+            this.txtSecondRemaining.Location = new System.Drawing.Point(56, 69);
+            this.txtSecondRemaining.Name = "txtSecondRemaining";
+            this.txtSecondRemaining.Size = new System.Drawing.Size(67, 23);
+            this.txtSecondRemaining.TabIndex = 12;
+            // 
+            // txtSecondsOnBattery
+            // 
+            this.txtSecondsOnBattery.digits = 6;
+            this.txtSecondsOnBattery.Location = new System.Drawing.Point(56, 42);
+            this.txtSecondsOnBattery.Name = "txtSecondsOnBattery";
+            this.txtSecondsOnBattery.Size = new System.Drawing.Size(67, 23);
+            this.txtSecondsOnBattery.TabIndex = 11;
             // 
             // radioConditionFinalShutdown
             // 
@@ -591,40 +620,14 @@ namespace nutclient
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
-            // txtSecondsOnBattery
+            // btnTestShutdown
             // 
-            this.txtSecondsOnBattery.Location = new System.Drawing.Point(56, 42);
-            this.txtSecondsOnBattery.Name = "txtSecondsOnBattery";
-            this.txtSecondsOnBattery.Size = new System.Drawing.Size(67, 23);
-            this.txtSecondsOnBattery.TabIndex = 11;
-            // 
-            // txtSecondRemaining
-            // 
-            this.txtSecondRemaining.Location = new System.Drawing.Point(56, 69);
-            this.txtSecondRemaining.Name = "txtSecondRemaining";
-            this.txtSecondRemaining.Size = new System.Drawing.Size(67, 23);
-            this.txtSecondRemaining.TabIndex = 12;
-            // 
-            // txtPercentRemaining
-            // 
-            this.txtPercentRemaining.Location = new System.Drawing.Point(145, 96);
-            this.txtPercentRemaining.Name = "txtPercentRemaining";
-            this.txtPercentRemaining.Size = new System.Drawing.Size(67, 23);
-            this.txtPercentRemaining.TabIndex = 13;
-            // 
-            // txtPort
-            // 
-            this.txtPort.Location = new System.Drawing.Point(75, 49);
-            this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(67, 23);
-            this.txtPort.TabIndex = 6;
-            // 
-            // txtPollPeriod
-            // 
-            this.txtPollPeriod.Location = new System.Drawing.Point(75, 165);
-            this.txtPollPeriod.Name = "txtPollPeriod";
-            this.txtPollPeriod.Size = new System.Drawing.Size(100, 23);
-            this.txtPollPeriod.TabIndex = 12;
+            this.btnTestShutdown.Location = new System.Drawing.Point(23, 93);
+            this.btnTestShutdown.Name = "btnTestShutdown";
+            this.btnTestShutdown.Size = new System.Drawing.Size(100, 23);
+            this.btnTestShutdown.TabIndex = 11;
+            this.btnTestShutdown.Text = "Test Shutdown";
+            this.btnTestShutdown.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -698,7 +701,6 @@ namespace nutclient
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button btnServiceInstall;
-        private System.Windows.Forms.Button btnTestShutdown;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.NotifyIcon notifyIcon;
@@ -707,6 +709,7 @@ namespace nutclient
         private NumericTextEdit txtPercentRemaining;
         private NumericTextEdit txtSecondRemaining;
         private NumericTextEdit txtSecondsOnBattery;
+        private System.Windows.Forms.Button btnTestShutdown;
     }
 }
 
