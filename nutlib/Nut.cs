@@ -117,15 +117,35 @@ namespace nutlib
         {
             if (timer != null)
             {
-                timer.Dispose();
-                timer = null;
+                try
+                {
+                    timer.Dispose();
+                }
+                catch (Exception e)
+                {
+                    NutLog.Log(e.ToString(), NutLog.ELogLevel.Exception);
+                }
+                finally
+                {
+                    timer = null;
+                }
             }
 
             if (client != null)
             {
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
-                client = null;
+                try
+                {
+                    client.Shutdown(SocketShutdown.Both);
+                    client.Close();
+                }
+                catch (Exception e)
+                {
+                    NutLog.Log(e.ToString(), NutLog.ELogLevel.Exception);
+                }
+                finally
+                {
+                    client = null;
+                }
             }
             connected = false;
         }
@@ -144,8 +164,8 @@ namespace nutlib
             }
             catch (Exception e)
             {
-                NutLog.Log(e.ToString());
                 client = null;
+                NutLog.Log(e.ToString(), NutLog.ELogLevel.Exception);
                 SetupReconnectTimer();
             }
         }
@@ -155,7 +175,7 @@ namespace nutlib
             if (suspend)
             {
                 // About to suspend
-                NutLog.Log("Suspending");
+                NutLog.Log("Suspending", NutLog.ELogLevel.Event);
                 if (connected)
                 {
                     disconnect();
@@ -165,7 +185,7 @@ namespace nutlib
             else 
             {
                 // About to resume
-                NutLog.Log("Resuming");
+                NutLog.Log("Resuming", NutLog.ELogLevel.Event);
                 if (suspended)
                 {
                     if (timer != null)
@@ -244,7 +264,7 @@ namespace nutlib
                 }
                 catch (Exception e)
                 {
-                    NutLog.Log("Failed to send: " + e.ToString());
+                    NutLog.Log("Failed to send: " + e.ToString(), NutLog.ELogLevel.Exception);
                     SetupReconnectTimer();
                 }
 
@@ -269,13 +289,13 @@ namespace nutlib
 
                 // Begin receiving the data
                 n.client.BeginReceive(n.buffer, 0, BufferSize, 0, new AsyncCallback(ReceiveCallback), n);
-                NutLog.Log("Connected");
+                NutLog.Log("Connected",NutLog.ELogLevel.Event);
 
                 n.Start();
             }
             catch (Exception e)
             {
-                NutLog.Log(e.ToString());
+                NutLog.Log(e.ToString(), NutLog.ELogLevel.Exception);
                 n.SetupReconnectTimer();
             }
         }
@@ -312,13 +332,13 @@ namespace nutlib
                     // All the data has arrived; put it in response.  
                     if (n.sb.Length > 1)
                     {
-                        NutLog.Log( n.sb.ToString() );
+                        NutLog.Log( n.sb.ToString(), NutLog.ELogLevel.Debug);
                     }
                 }
             }
             catch (Exception e)
             {
-                NutLog.Log(e.ToString());
+                NutLog.Log(e.ToString(), NutLog.ELogLevel.Exception);
                 n.SetupReconnectTimer();
             }
         }
@@ -470,7 +490,7 @@ namespace nutlib
            }
             catch (Exception e)
             {
-                NutLog.Log(e.ToString());
+                NutLog.Log(e.ToString(), NutLog.ELogLevel.Exception);
             }
         }
 

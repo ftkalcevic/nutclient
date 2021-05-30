@@ -66,6 +66,7 @@ namespace nutclient
             this.radioRunAsApplication = new System.Windows.Forms.RadioButton();
             this.radioRunAsService = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnTestShutdown = new System.Windows.Forms.Button();
             this.radioActionHibernate = new System.Windows.Forms.RadioButton();
             this.radioActionShutdown = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -81,7 +82,9 @@ namespace nutclient
             this.label1 = new System.Windows.Forms.Label();
             this.radioConditionAfterSeconds = new System.Windows.Forms.RadioButton();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.btnTestShutdown = new System.Windows.Forms.Button();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.cboLogLevel = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageConfig.SuspendLayout();
@@ -89,6 +92,7 @@ namespace nutclient
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -237,6 +241,7 @@ namespace nutclient
             // 
             // tabPageConfig
             // 
+            this.tabPageConfig.Controls.Add(this.groupBox5);
             this.tabPageConfig.Controls.Add(this.groupBox4);
             this.tabPageConfig.Controls.Add(this.btnApply);
             this.tabPageConfig.Controls.Add(this.groupBox3);
@@ -266,7 +271,7 @@ namespace nutclient
             this.groupBox4.Controls.Add(this.label2);
             this.groupBox4.Location = new System.Drawing.Point(9, 316);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(200, 203);
+            this.groupBox4.Size = new System.Drawing.Size(184, 203);
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "NUT Config";
@@ -372,7 +377,7 @@ namespace nutclient
             // 
             // btnApply
             // 
-            this.btnApply.Location = new System.Drawing.Point(272, 436);
+            this.btnApply.Location = new System.Drawing.Point(272, 496);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 4;
@@ -450,7 +455,6 @@ namespace nutclient
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btnTestShutdown);
             this.groupBox2.Controls.Add(this.radioActionHibernate);
             this.groupBox2.Controls.Add(this.radioActionShutdown);
             this.groupBox2.Location = new System.Drawing.Point(8, 176);
@@ -459,6 +463,15 @@ namespace nutclient
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Action";
+            // 
+            // btnTestShutdown
+            // 
+            this.btnTestShutdown.Location = new System.Drawing.Point(19, 71);
+            this.btnTestShutdown.Name = "btnTestShutdown";
+            this.btnTestShutdown.Size = new System.Drawing.Size(100, 23);
+            this.btnTestShutdown.TabIndex = 11;
+            this.btnTestShutdown.Text = "Test Shutdown";
+            this.btnTestShutdown.UseVisualStyleBackColor = true;
             // 
             // radioActionHibernate
             // 
@@ -620,14 +633,36 @@ namespace nutclient
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
-            // btnTestShutdown
+            // groupBox5
             // 
-            this.btnTestShutdown.Location = new System.Drawing.Point(23, 93);
-            this.btnTestShutdown.Name = "btnTestShutdown";
-            this.btnTestShutdown.Size = new System.Drawing.Size(100, 23);
-            this.btnTestShutdown.TabIndex = 11;
-            this.btnTestShutdown.Text = "Test Shutdown";
-            this.btnTestShutdown.UseVisualStyleBackColor = true;
+            this.groupBox5.Controls.Add(this.cboLogLevel);
+            this.groupBox5.Controls.Add(this.label15);
+            this.groupBox5.Controls.Add(this.btnTestShutdown);
+            this.groupBox5.Location = new System.Drawing.Point(199, 315);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(148, 100);
+            this.groupBox5.TabIndex = 6;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Diagnostics";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(7, 21);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(57, 15);
+            this.label15.TabIndex = 12;
+            this.label15.Text = "Log Level";
+            // 
+            // cboLogLevel
+            // 
+            this.cboLogLevel.FormattingEnabled = true;
+            this.cboLogLevel.Location = new System.Drawing.Point(7, 40);
+            this.cboLogLevel.Name = "cboLogLevel";
+            this.cboLogLevel.Size = new System.Drawing.Size(133, 23);
+            this.cboLogLevel.TabIndex = 13;
+            this.cboLogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboLogLevel.SelectedValueChanged += new System.EventHandler(this.cboLogLevelSelectedValueChanged);
             // 
             // MainForm
             // 
@@ -652,10 +687,11 @@ namespace nutclient
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
-
         #endregion
 
         private System.Windows.Forms.TabControl tabControl1;
@@ -710,6 +746,9 @@ namespace nutclient
         private NumericTextEdit txtSecondRemaining;
         private NumericTextEdit txtSecondsOnBattery;
         private System.Windows.Forms.Button btnTestShutdown;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox cboLogLevel;
     }
 }
 

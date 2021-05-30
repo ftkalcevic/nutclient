@@ -9,9 +9,11 @@ namespace nutlib
         public enum ELogLevel
         {
             Debug,
-            Trace
+            Trace,
+            Event,
+            Exception
         };
-        const ELogLevel logLevel = ELogLevel.Trace;
+        static public ELogLevel logLevel { get; set; }
 
         public delegate void LogMsgDelegate(string msg);
         public static event LogMsgDelegate LogEvent = null;
@@ -19,6 +21,7 @@ namespace nutlib
 
         static NutLog()
         {
+            logLevel = ELogLevel.Trace;
             LogFilePath = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName) + System.IO.Path.DirectorySeparatorChar + "NutClient.log";
         }
 
@@ -30,12 +33,24 @@ namespace nutlib
 
             if (level >= logLevel)
             {
-                System.IO.File.AppendAllText(LogFilePath, s + "\r\n");
-            }
+                try
+                {
+                    System.IO.File.AppendAllText(LogFilePath, s + "\r\n");
+                }
+                catch (Exception)
+                {
+                }
 
-            if (level >= logLevel && LogEvent != null)
-            {
-                LogEvent(s);
+                if (LogEvent != null)
+                {
+                    try
+                    {
+                        LogEvent(s);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
             }
         }
     }

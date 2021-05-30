@@ -41,6 +41,7 @@ namespace nutlib
         public string password;
         public string upsDevice;
         public int pollPeriod;
+        public NutLog.ELogLevel logLevel;
 
         public NutConfig()
         {
@@ -54,6 +55,7 @@ namespace nutlib
             minimiseToTray = true;
             port = 3493;
             pollPeriod = 15;
+            logLevel = NutLog.ELogLevel.Trace;
 
             hostname = "nas2";
             username = "upsmon";
@@ -77,6 +79,7 @@ namespace nutlib
             username = ReadSettingString("username", username);
             password = ReadSettingString("password", password);
             upsDevice = ReadSettingString("upsDevice", upsDevice);
+            logLevel = (NutLog.ELogLevel)ReadSettingInt("logLevel", (int)logLevel);
         }
 
         public void write()
@@ -95,6 +98,7 @@ namespace nutlib
             WriteSetting("username", username);
             WriteSetting("password", password);
             WriteSetting("upsDevice", upsDevice);
+            WriteSetting("logLevel", (int)logLevel);
         }
 
         private void WriteSetting(in string name, in int value )

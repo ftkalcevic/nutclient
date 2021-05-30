@@ -13,6 +13,12 @@ using System.Diagnostics;
 
 namespace nutclient
 {
+    internal class NameValuePair
+    {
+        public string name { get; set; }
+        public int id { get; set; }
+    }
+
     public partial class MainForm : Form
     {
         const int MAX_LOG_LEN_HIGH = 32000;
@@ -20,10 +26,22 @@ namespace nutclient
         NutControl nut;
         private static int WM_QUERYENDSESSION = 0x11;
         private static bool systemShutdown = false;
+        private List<NameValuePair> LogLevels;
 
         public MainForm()
         {
+            LogLevels = new List<NameValuePair>();
+
+            LogLevels.Add(new NameValuePair() { name = "Event", id = (int)NutLog.ELogLevel.Event });
+            LogLevels.Add(new NameValuePair() { name = "Trace", id = (int)NutLog.ELogLevel.Trace });
+            LogLevels.Add(new NameValuePair() { name = "Debug", id = (int)NutLog.ELogLevel.Debug });
+
             InitializeComponent();
+
+            cboLogLevel.DisplayMember = "name";
+            cboLogLevel.ValueMember = "id";
+            cboLogLevel.DataSource = LogLevels;
+
             notifyIcon.Icon = Properties.Resources.NotifyIcon;
 
             NutLog.LogEvent += NutLog_LogEvent;
@@ -65,6 +83,7 @@ namespace nutclient
 
         private void InitDisplay()
         {
+            cboLogLevel.SelectedValue = (int)nut.cfg.logLevel;
             txtPercentRemaining.Text = nut.cfg.percentRemaining.ToString();
             txtSecondRemaining.Text = nut.cfg.secondsRemaining.ToString();
             txtSecondsOnBattery.Text = nut.cfg.afterSeconds.ToString();
@@ -180,6 +199,13 @@ namespace nutclient
 
         }
 
+        private void cboLogLevelSelectedValueChanged(object sender, EventArgs e)
+        {
+            if ( cboLogLevel.SelectedValue != null )
+                NutLog.logLevel = (NutLog.ELogLevel)cboLogLevel.SelectedValue;
+        }
+
+
         private void btnApply_Click(object sender, EventArgs e)
         {
             nut.cfg.afterSeconds = int.Parse(txtSecondsOnBattery.Text);
@@ -193,6 +219,7 @@ namespace nutclient
                 nut.cfg.password = txtPassword.Text;
             nut.cfg.minimiseToTray = chkMinimiseToTray.Checked;
             nut.cfg.startWithWindows = chkStartWithWindows.Checked;
+            nut.cfg.logLevel = (NutLog.ELogLevel)cboLogLevel.SelectedValue;
 
             if (nut.cfg.startWithWindows && nut.cfg.runAs == NutConfig.ERunAs.Application)
                 Registry.SetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", Application.ProductName, System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);

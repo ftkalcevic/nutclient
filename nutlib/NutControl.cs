@@ -70,7 +70,7 @@ namespace nutlib
                     // regardless of other settings - if we are in FSD, time to stop
                     if ((status & Nut.EUPSStatus.FSD) == Nut.EUPSStatus.FSD)
                     {
-                        NutLog.Log("Received FSD message.  Shutting down now.");
+                        NutLog.Log("Received FSD message.  Shutting down now.", NutLog.ELogLevel.Event);
                         Shutdown();
                     }
                     else
@@ -111,12 +111,12 @@ namespace nutlib
             int runtime = int.Parse(vars["battery.runtime"]);
             if (runtime < cfg.secondsRemaining)
             {
-                NutLog.Log($"Battery remaining runtime {runtime}s is below threshold {cfg.secondsRemaining}s.  Shutting down.");
+                NutLog.Log($"Battery remaining runtime {runtime}s is below threshold {cfg.secondsRemaining}s.  Shutting down.", NutLog.ELogLevel.Event);
                 Shutdown();
             }
             else
             {
-                NutLog.Log($"Battery remaining runtime {runtime}s > {cfg.secondsRemaining}s.");
+                NutLog.Log($"Battery remaining runtime {runtime}s > {cfg.secondsRemaining}s.", NutLog.ELogLevel.Event);
             }
         }
 
@@ -125,12 +125,12 @@ namespace nutlib
             int charge = int.Parse(vars["battery.charge"]);
             if (charge < cfg.percentRemaining)
             {
-                NutLog.Log($"Battery charge {charge}% is below threshold {cfg.percentRemaining}%.  Shutting down.");
+                NutLog.Log($"Battery charge {charge}% is below threshold {cfg.percentRemaining}%.  Shutting down.", NutLog.ELogLevel.Event);
                 Shutdown();
             }
             else
             {
-                NutLog.Log($"Battery charge {charge}% > {cfg.percentRemaining}%.");
+                NutLog.Log($"Battery charge {charge}% > {cfg.percentRemaining}%.", NutLog.ELogLevel.Event);
             }
         }
 
@@ -145,12 +145,12 @@ namespace nutlib
                 int elapsedSeconds = (int)DateTime.Now.Subtract((DateTime)onBatteryStartTime).TotalSeconds;
                 if (elapsedSeconds > cfg.afterSeconds)
                 {
-                    NutLog.Log($"On battery charge for {elapsedSeconds}s.  This has exceeded the threshold of {cfg.afterSeconds}s.  Shutting down.");
+                    NutLog.Log($"On battery charge for {elapsedSeconds}s.  This has exceeded the threshold of {cfg.afterSeconds}s.  Shutting down.", NutLog.ELogLevel.Event);
                     Shutdown();
                 }
                 else
                 {
-                    NutLog.Log($"On battery charge for {elapsedSeconds}s/{cfg.afterSeconds}s.");
+                    NutLog.Log($"On battery charge for {elapsedSeconds}s/{cfg.afterSeconds}s.", NutLog.ELogLevel.Event);
                 }
             }
         }
@@ -159,12 +159,12 @@ namespace nutlib
         {
             if (cfg.shutdownAction == NutConfig.EShutdownAction.Hibernate)
             {
-                NutLog.Log("Hibernating");
+                NutLog.Log("Hibernating", NutLog.ELogLevel.Event);
                 Process.Start("shutdown.exe", "/h");
             }
             else // if (cfg.shutdownAction == NutConfig.EShutdownAction.Shutdown)
             {
-                NutLog.Log("Shutting down");
+                NutLog.Log("Shutting down", NutLog.ELogLevel.Event);
                 Process.Start("shutdown.exe", "/s /t 0");
             }
         }
