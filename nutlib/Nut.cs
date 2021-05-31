@@ -154,8 +154,12 @@ namespace nutlib
         {
             try
             {
-                IPHostEntry ipHostInfo = Dns.GetHostEntry(host);
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
+                IPAddress ipAddress;
+                if ( !IPAddress.TryParse(host, out ipAddress ) )
+                {
+                    IPHostEntry ipHostInfo = Dns.GetHostEntry(host);
+                    ipAddress = ipHostInfo.AddressList[0];
+                }
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
                 NutLog.Log($"Connecting to {host}:{port}");
