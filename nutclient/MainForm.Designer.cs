@@ -45,6 +45,10 @@ namespace nutclient
             this.txtLastUpdate = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.tabPageConfig = new System.Windows.Forms.TabPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.cboLogLevel = new System.Windows.Forms.ComboBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.btnTestShutdown = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.txtPort = new nutclient.NumericTextEdit();
             this.txtPollPeriod = new nutclient.NumericTextEdit();
@@ -66,7 +70,6 @@ namespace nutclient
             this.radioRunAsApplication = new System.Windows.Forms.RadioButton();
             this.radioRunAsService = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btnTestShutdown = new System.Windows.Forms.Button();
             this.radioActionHibernate = new System.Windows.Forms.RadioButton();
             this.radioActionShutdown = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -82,17 +85,17 @@ namespace nutclient
             this.label1 = new System.Windows.Forms.Label();
             this.radioConditionAfterSeconds = new System.Windows.Forms.RadioButton();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.cboLogLevel = new System.Windows.Forms.ComboBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.txtLoad = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageConfig.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -110,6 +113,9 @@ namespace nutclient
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.txtLoad);
+            this.tabPageMain.Controls.Add(this.label17);
+            this.tabPageMain.Controls.Add(this.label16);
             this.tabPageMain.Controls.Add(this.label14);
             this.tabPageMain.Controls.Add(this.txtLog);
             this.tabPageMain.Controls.Add(this.label13);
@@ -133,7 +139,7 @@ namespace nutclient
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(9, 148);
+            this.label14.Location = new System.Drawing.Point(9, 160);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(27, 15);
             this.label14.TabIndex = 12;
@@ -144,19 +150,19 @@ namespace nutclient
             this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLog.Location = new System.Drawing.Point(9, 170);
+            this.txtLog.Location = new System.Drawing.Point(9, 179);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLog.Size = new System.Drawing.Size(338, 349);
+            this.txtLog.Size = new System.Drawing.Size(338, 340);
             this.txtLog.TabIndex = 11;
             this.txtLog.WordWrap = false;
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(201, 103);
+            this.label13.Location = new System.Drawing.Point(170, 103);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(47, 15);
             this.label13.TabIndex = 9;
@@ -165,7 +171,7 @@ namespace nutclient
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(198, 73);
+            this.label12.Location = new System.Drawing.Point(170, 73);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(50, 15);
             this.label12.TabIndex = 8;
@@ -203,7 +209,7 @@ namespace nutclient
             this.txtBatteryCharge.Location = new System.Drawing.Point(100, 100);
             this.txtBatteryCharge.Name = "txtBatteryCharge";
             this.txtBatteryCharge.ReadOnly = true;
-            this.txtBatteryCharge.Size = new System.Drawing.Size(95, 23);
+            this.txtBatteryCharge.Size = new System.Drawing.Size(68, 23);
             this.txtBatteryCharge.TabIndex = 4;
             // 
             // txtRunTime
@@ -211,7 +217,7 @@ namespace nutclient
             this.txtRunTime.Location = new System.Drawing.Point(100, 70);
             this.txtRunTime.Name = "txtRunTime";
             this.txtRunTime.ReadOnly = true;
-            this.txtRunTime.Size = new System.Drawing.Size(95, 23);
+            this.txtRunTime.Size = new System.Drawing.Size(68, 23);
             this.txtRunTime.TabIndex = 3;
             // 
             // txtStatus
@@ -254,6 +260,46 @@ namespace nutclient
             this.tabPageConfig.TabIndex = 1;
             this.tabPageConfig.Text = "Config";
             this.tabPageConfig.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.cboLogLevel);
+            this.groupBox5.Controls.Add(this.label15);
+            this.groupBox5.Controls.Add(this.btnTestShutdown);
+            this.groupBox5.Location = new System.Drawing.Point(199, 315);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(148, 100);
+            this.groupBox5.TabIndex = 6;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Diagnostics";
+            // 
+            // cboLogLevel
+            // 
+            this.cboLogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboLogLevel.FormattingEnabled = true;
+            this.cboLogLevel.Location = new System.Drawing.Point(7, 40);
+            this.cboLogLevel.Name = "cboLogLevel";
+            this.cboLogLevel.Size = new System.Drawing.Size(133, 23);
+            this.cboLogLevel.TabIndex = 13;
+            this.cboLogLevel.SelectedValueChanged += new System.EventHandler(this.cboLogLevelSelectedValueChanged);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(7, 21);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(57, 15);
+            this.label15.TabIndex = 12;
+            this.label15.Text = "Log Level";
+            // 
+            // btnTestShutdown
+            // 
+            this.btnTestShutdown.Location = new System.Drawing.Point(19, 71);
+            this.btnTestShutdown.Name = "btnTestShutdown";
+            this.btnTestShutdown.Size = new System.Drawing.Size(100, 23);
+            this.btnTestShutdown.TabIndex = 11;
+            this.btnTestShutdown.Text = "Test Shutdown";
+            this.btnTestShutdown.UseVisualStyleBackColor = true;
             // 
             // groupBox4
             // 
@@ -464,15 +510,6 @@ namespace nutclient
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Action";
             // 
-            // btnTestShutdown
-            // 
-            this.btnTestShutdown.Location = new System.Drawing.Point(19, 71);
-            this.btnTestShutdown.Name = "btnTestShutdown";
-            this.btnTestShutdown.Size = new System.Drawing.Size(100, 23);
-            this.btnTestShutdown.TabIndex = 11;
-            this.btnTestShutdown.Text = "Test Shutdown";
-            this.btnTestShutdown.UseVisualStyleBackColor = true;
-            // 
             // radioActionHibernate
             // 
             this.radioActionHibernate.AutoSize = true;
@@ -633,36 +670,31 @@ namespace nutclient
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
-            // groupBox5
+            // label16
             // 
-            this.groupBox5.Controls.Add(this.cboLogLevel);
-            this.groupBox5.Controls.Add(this.label15);
-            this.groupBox5.Controls.Add(this.btnTestShutdown);
-            this.groupBox5.Location = new System.Drawing.Point(199, 315);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(148, 100);
-            this.groupBox5.TabIndex = 6;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Diagnostics";
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(9, 133);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(57, 15);
+            this.label16.TabIndex = 13;
+            this.label16.Text = "UPS Load";
             // 
-            // label15
+            // label17
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(7, 21);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(57, 15);
-            this.label15.TabIndex = 12;
-            this.label15.Text = "Log Level";
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(150, 133);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(18, 15);
+            this.label17.TabIndex = 14;
+            this.label17.Text = "W";
             // 
-            // cboLogLevel
+            // txtLoad
             // 
-            this.cboLogLevel.FormattingEnabled = true;
-            this.cboLogLevel.Location = new System.Drawing.Point(7, 40);
-            this.cboLogLevel.Name = "cboLogLevel";
-            this.cboLogLevel.Size = new System.Drawing.Size(133, 23);
-            this.cboLogLevel.TabIndex = 13;
-            this.cboLogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboLogLevel.SelectedValueChanged += new System.EventHandler(this.cboLogLevelSelectedValueChanged);
+            this.txtLoad.Location = new System.Drawing.Point(100, 130);
+            this.txtLoad.Name = "txtLoad";
+            this.txtLoad.ReadOnly = true;
+            this.txtLoad.Size = new System.Drawing.Size(48, 23);
+            this.txtLoad.TabIndex = 15;
             // 
             // MainForm
             // 
@@ -679,6 +711,8 @@ namespace nutclient
             this.tabPageMain.ResumeLayout(false);
             this.tabPageMain.PerformLayout();
             this.tabPageConfig.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -687,8 +721,6 @@ namespace nutclient
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -749,6 +781,9 @@ namespace nutclient
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ComboBox cboLogLevel;
+        private System.Windows.Forms.TextBox txtLoad;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label16;
     }
 }
 

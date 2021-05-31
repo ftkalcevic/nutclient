@@ -13,14 +13,14 @@ using System.Diagnostics;
 
 namespace nutclient
 {
-    internal class NameValuePair
-    {
-        public string name { get; set; }
-        public int id { get; set; }
-    }
-
     public partial class MainForm : Form
     {
+        internal class NameValuePair
+        {
+            public string name { get; set; }
+            public int id { get; set; }
+        }
+
         const int MAX_LOG_LEN_HIGH = 32000;
         const int MAX_LOG_LEN_LOW = 25000;
         NutControl nut;
@@ -247,12 +247,16 @@ namespace nutclient
             string status = vars["ups.status"];
             int runtime = int.Parse(vars["battery.runtime"]);
             int batteryCharge = int.Parse(vars["battery.charge"]);
+            int load = int.Parse(vars["ups.load"]);
+            int capacity = int.Parse(vars["ups.realpower.nominal"]);
+            int power = (int)Math.Round((double)load * (double)capacity / 100.0);
 
             Invoke((MethodInvoker)delegate {
                 txtStatus.Text = status;
                 txtRunTime.Text = runtime.ToString();
                 txtBatteryCharge.Text = batteryCharge.ToString();
                 txtLastUpdate.Text = DateTime.Now.ToString();
+                txtLoad.Text = power.ToString();
 
                 notifyIcon.Text = "Status: " + status;
                 notifyIcon.BalloonTipText = "Status: " + status;
